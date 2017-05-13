@@ -1,11 +1,22 @@
-#! bin/python
-from flask import Flask
+import json
 
-app = Flask(__name__)
+from aiohttp import web
 
-@app.route('/')
-def index():
-	return "Hello, World!"
+from notifications import send_email
 
-if __name__ == '__main__':
-	app.run(debug=True)
+
+async def handle(request):
+    name = request.match_info.get('name', "Anonymous")
+    text = "Hello, {name}"
+    return web.Response(text=text.format(name=name))
+
+async def email(request):
+    email_response = send_email()
+    return web.json_response(email_response)
+
+app = web.Application()
+app.router.add_get('/', handle)
+app.router.add_get('/email', email)
+app.router.add_get('/{name}', handle)
+
+web.run_app(app, host='localhost', port=8000)
