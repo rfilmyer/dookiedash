@@ -17,6 +17,7 @@ async def email(request):
 app = web.Application()
 app.router.add_get('/', handle)
 app.router.add_get('/email', email)
+app.router.add_post('/email', email)
 app.router.add_get('/{name}', handle)
 
 web.run_app(app, host='localhost', port=8000)
